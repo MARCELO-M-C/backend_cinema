@@ -2,6 +2,8 @@ const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const app = express();
+const swaggerUi = require('swagger-ui-express');
+const swaggerSpec = require('./src/docs/swagger');
 const PORT = process.env.PORT || 3000;
 
 // Cargar variables de entorno
@@ -10,6 +12,7 @@ dotenv.config();
 // Middlewares
 app.use(cors());
 app.use(express.json());
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Rutas
 const userRoutes = require('./src/routes/userRoutes');
