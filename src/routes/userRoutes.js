@@ -1,15 +1,28 @@
 const express = require('express');
-const { loginUsuario, crearUsuario, obtenerPerfil } = require('../controllers/userController');
-const { verificarToken } = require('../middlewares/authMiddleware');
+const {
+  loginUsuario,
+  crearUsuario,
+  obtenerPerfil,
+  obtenerUsuarios,
+  actualizarUsuario,
+  eliminarUsuario
+} = require('../controllers/userController');
+const { verificarToken, esAdmin } = require('../middlewares/authMiddleware');
 const router = express.Router();
 
-// Ruta para login
 router.post('/login', loginUsuario);
-
-// Ruta para crear usuario
 router.post('/', crearUsuario);
 
-// Ruta para obtener el perfil de usuario (requiere autenticación)
+// Solo admins pueden ver todos los usuarios
+router.get('/', verificarToken, esAdmin, obtenerUsuarios);
+
+// Ver perfil por ID
 router.get('/:id', verificarToken, obtenerPerfil);
+
+// Actualizar usuario (admin o el mismo usuario)
+router.put('/:id', verificarToken, actualizarUsuario);
+
+// Dar de baja (solo admin)
+router.delete('/:id', verificarToken, esAdmin, eliminarUsuario);
 
 module.exports = router;

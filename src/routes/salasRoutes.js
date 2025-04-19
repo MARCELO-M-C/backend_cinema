@@ -1,18 +1,21 @@
 const express = require('express');
-const { crearSala, modificarPeliculaSala, modificarCapacidadSala, obtenerSalas } = require('../controllers/salasController');
-const { verificarToken } = require('../middlewares/authMiddleware');
+const {
+  crearSala,
+  obtenerSalas,
+  obtenerSalaPorId,
+  actualizarSala,
+  eliminarSala
+} = require('../controllers/salasController');
+const { verificarToken, esAdmin } = require('../middlewares/authMiddleware');
 const router = express.Router();
 
-// Ruta para crear una nueva sala (solo admin)
-router.post('/', verificarToken, crearSala);
-
-// Ruta para modificar la película de una sala (solo admin)
-router.put('/modificar-pelicula', verificarToken, modificarPeliculaSala);
-
-// Ruta para modificar la capacidad de la sala (solo admin)
-router.put('/modificar-capacidad', verificarToken, modificarCapacidadSala);
-
-// Ruta para obtener todas las salas
+// Obtener salas (todos pueden)
 router.get('/', obtenerSalas);
+router.get('/:id', obtenerSalaPorId);
+
+// Requieren autenticación y ser admin
+router.post('/', verificarToken, esAdmin, crearSala);
+router.put('/:id', verificarToken, esAdmin, actualizarSala);
+router.delete('/:id', verificarToken, esAdmin, eliminarSala);
 
 module.exports = router;

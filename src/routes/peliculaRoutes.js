@@ -1,14 +1,21 @@
 const express = require('express');
-const { crearPelicula, obtenerPeliculas, obtenerPelicula } = require('../controllers/peliculaController');
+const {
+  crearPelicula,
+  obtenerPeliculas,
+  obtenerPeliculaPorId,
+  modificarPelicula,
+  eliminarPelicula
+} = require('../controllers/peliculaController');
+const { verificarToken, esAdmin } = require('../middlewares/authMiddleware');
 const router = express.Router();
 
-// Ruta para crear película
-router.post('/', crearPelicula);
-
-// Ruta para obtener todas las películas
+// Ver películas (todos pueden)
 router.get('/', obtenerPeliculas);
+router.get('/:id', obtenerPeliculaPorId);
 
-// Ruta para obtener una película por ID
-router.get('/:id', obtenerPelicula);
+// Solo admin puede gestionarlas
+router.post('/', verificarToken, esAdmin, crearPelicula);
+router.put('/:id', verificarToken, esAdmin, modificarPelicula);
+router.delete('/:id', verificarToken, esAdmin, eliminarPelicula);
 
 module.exports = router;

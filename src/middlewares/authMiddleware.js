@@ -1,19 +1,26 @@
 const jwt = require('jsonwebtoken');
+require('dotenv').config();
 
 const verificarToken = (req, res, next) => {
-  const token = req.header('Authorization')?.replace('Bearer ', '');
-
+  const token = req.headers.authorization?.split(' ')[1];
   if (!token) {
-    return res.status(401).json({ success: false, message: 'No autorizado' });
+    return res.status(401).json({ success: false, message: 'Token no proporcionado' });
   }
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.usuario = decoded; // Almacenar los datos del usuario decodificados en la petición
+    req.usuario = decoded;
     next();
-  } catch (error) {
-    return res.status(401).json({ success: false, message: 'Token inválido' });
+  } catch (err) {
+    res.status(401).json({ success: false, message: 'Token inválido' });
   }
 };
 
-module.exports = { verificarToken };
+const esAdmin = (req, res, next) => {
+  if (req.usuario?.tipo !== 'admin') {
+    return res.status(403).json({ success: false, message: 'Solo administradores pueden realizar esta acción' });
+  }
+  next();
+};
+
+module.exports = { verificarToken, esAdmin };

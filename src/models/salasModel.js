@@ -1,16 +1,11 @@
 const db = require('../config/db');
 
-const crearSala = async ({ nombre, pelicula_id, filas, columnas }) => {
+const crearSala = async ({ nombre, filas, columnas }) => {
   const [result] = await db.execute(
     'INSERT INTO salas (nombre, filas, columnas) VALUES (?, ?, ?)',
-    [nombre, pelicula_id, filas, columnas]
+    [nombre, filas, columnas]
   );
   return result.insertId;
-};
-
-const obtenerSalaPorId = async (id) => {
-  const [rows] = await db.execute('SELECT * FROM salas WHERE id = ?', [id]);
-  return rows[0];
 };
 
 const obtenerTodasSalas = async () => {
@@ -18,8 +13,26 @@ const obtenerTodasSalas = async () => {
   return rows;
 };
 
-const actualizarCapacidadSala = async (sala_id, filas, columnas) => {
-  await db.execute('UPDATE salas SET filas = ?, columnas = ? WHERE id = ?', [filas, columnas, sala_id]);
+const obtenerSalaPorId = async (id) => {
+  const [rows] = await db.execute('SELECT * FROM salas WHERE id = ?', [id]);
+  return rows[0];
 };
 
-module.exports = { crearSala, obtenerSalaPorId, obtenerTodasSalas, actualizarCapacidadSala };
+const actualizarSala = async (id, { nombre, filas, columnas }) => {
+  await db.execute(
+    'UPDATE salas SET nombre = ?, filas = ?, columnas = ? WHERE id = ?',
+    [nombre, filas, columnas, id]
+  );
+};
+
+const eliminarSala = async (id) => {
+  await db.execute('DELETE FROM salas WHERE id = ?', [id]);
+};
+
+module.exports = {
+  crearSala,
+  obtenerTodasSalas,
+  obtenerSalaPorId,
+  actualizarSala,
+  eliminarSala
+};
