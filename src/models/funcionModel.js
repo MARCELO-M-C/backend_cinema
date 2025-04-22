@@ -9,7 +9,19 @@ const crearFuncion = async ({ pelicula_id, sala_id, fecha, hora }) => {
 };
 
 const obtenerTodasFunciones = async () => {
-  const [rows] = await db.execute('SELECT * FROM funciones');
+  const [rows] = await db.execute(`
+    SELECT 
+      funciones.id,
+      funciones.fecha,
+      funciones.hora,
+      funciones.pelicula_id,
+      funciones.sala_id,
+      peliculas.titulo AS pelicula_titulo,
+      salas.nombre AS sala_nombre
+    FROM funciones
+    JOIN peliculas ON funciones.pelicula_id = peliculas.id
+    JOIN salas ON funciones.sala_id = salas.id
+  `);
   return rows;
 };
 

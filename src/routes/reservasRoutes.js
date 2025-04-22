@@ -101,7 +101,7 @@ router.get('/todas', verificarToken, esAdmin, obtenerTodasReservas);
  *       404:
  *         description: Reservación no encontrada
  */
-router.get('/por-id/:id', verificarToken, obtenerReservacionPorId);
+router.get('/por-id/:id', verificarToken, esAdmin, obtenerReservacionPorId);
 
 /**
  * @swagger
@@ -133,7 +133,7 @@ router.get('/por-id/:id', verificarToken, obtenerReservacionPorId);
  *       404:
  *         description: Reservación no encontrada
  */
-router.get('/:funcion_id/:fila/:columna', verificarToken, obtenerReservacionPorButaca);
+router.get('/:funcion_id/:fila/:columna', verificarToken, esAdmin, obtenerReservacionPorButaca);
 
 /**
  * @swagger
@@ -172,7 +172,7 @@ router.get('/:funcion_id/:fila/:columna', verificarToken, obtenerReservacionPorB
  *       404:
  *         description: Reservación no encontrada
  */
-router.put('/editar/:id', verificarToken, actualizarReservacion);
+router.put('/editar/:id', verificarToken, esAdmin, actualizarReservacion);
 
 /**
  * @swagger
@@ -194,6 +194,6 @@ router.put('/editar/:id', verificarToken, actualizarReservacion);
  *       404:
  *         description: Reservación no encontrada
  */
-router.delete('/:id', verificarToken, eliminarReservacion);
+router.delete('/:id', verificarToken, esAdmin, eliminarReservacion);
 
 module.exports = router;
