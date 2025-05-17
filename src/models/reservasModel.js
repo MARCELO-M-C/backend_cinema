@@ -11,7 +11,17 @@ const crearReservacion = async ({ funcion_id, usuario_id, fila, columna }) => {
 
 // Obtener todas las reservaciones (solo admin debería usarla)
 const obtenerTodasReservas = async () => {
-  const [rows] = await db.execute('SELECT * FROM reservaciones');
+  const [rows] = await db.execute(`
+    SELECT 
+      reservaciones.id,
+      usuarios.nombre AS usuario_nombre,
+      funciones.id AS funcion_id,      
+      reservaciones.fila,
+      reservaciones.columna
+    FROM reservaciones
+    JOIN usuarios ON reservaciones.usuario_id = usuarios.id
+    JOIN funciones ON reservaciones.funcion_id = funciones.id
+  `);
   return rows;
 };
 
