@@ -59,4 +59,27 @@ const eliminarReservacion = async (id) => {
   await db.execute('DELETE FROM reservaciones WHERE id = ?', [id]);
 };
 
-module.exports = { crearReservacion, obtenerReservacionesPorUsuario, obtenerReservacionPorFuncionYButaca, obtenerReservacionPorId, actualizarReservacion, eliminarReservacion, obtenerTodasReservas };
+const crearMultiplesReservaciones = async ({ funcion_id, usuario_id, butacas }) => {
+  const insertIds = [];
+
+  for (const butaca of butacas) {
+    const { fila, columna } = butaca;
+    const [result] = await db.execute(
+      'INSERT INTO reservaciones (funcion_id, usuario_id, fila, columna) VALUES (?, ?, ?, ?)',
+      [funcion_id, usuario_id, fila, columna]
+    );
+    insertIds.push(result.insertId);
+  }
+
+  return insertIds; 
+};
+
+module.exports = { crearReservacion, 
+  obtenerReservacionesPorUsuario, 
+  obtenerReservacionPorFuncionYButaca, 
+  obtenerReservacionPorId, 
+  actualizarReservacion, 
+  eliminarReservacion, 
+  obtenerTodasReservas, 
+  crearMultiplesReservaciones
+ };

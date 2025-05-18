@@ -34,8 +34,8 @@ const obtenerFunciones = async (req, res) => {
         id: funcion.id,
         fecha: funcion.fecha,
         hora: funcion.hora,
-        pelicula: pelicula ? pelicula.titulo : null,
-        sala: sala ? sala.nombre : null
+        pelicula: pelicula || null,
+        sala: sala || null
       };
     }));
 

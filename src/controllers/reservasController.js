@@ -110,4 +110,49 @@ const eliminarReservacion = async (req, res) => {
   }
 };
 
-module.exports = { crearReservacion, obtenerReservaciones, obtenerReservacionPorButaca, actualizarReservacion, eliminarReservacion, obtenerTodasReservas, obtenerReservacionPorId };
+const crearMultiplesReservaciones = async (req, res) => {
+  const { funcion_id, butacas } = req.body;
+  const usuario_id = req.usuario.id; // Desde JWT
+
+  if (!funcion_id || !Array.isArray(butacas) || butacas.length === 0) {
+    return res.status(400).json({ success: false, message: 'Datos incompletos o formato incorrecto' });
+  }
+
+  // Verificar que la función exista
+  const funcion = await Funcion.obtenerFuncionPorId(funcion_id);
+  if (!funcion) {
+    return res.status(404).json({ success: false, message: 'Función no encontrada' });
+  }
+
+  try {
+    for (const butaca of butacas) {
+      const { fila, columna } = butaca;
+
+      const yaReservada = await Reservacion.obtenerReservacionPorFuncionYButaca(funcion_id, fila, columna);
+      if (yaReservada) {
+        return res.status(409).json({
+          success: false,
+          message: `La butaca fila ${fila}, columna ${columna} ya está reservada`,
+        });
+      }
+
+      await Reservacion.crearReservacion({ funcion_id, usuario_id, fila, columna });
+    }
+
+    res.status(201).json({ success: true, message: 'Reservas realizadas con éxito' });
+
+  } catch (err) {
+    console.error('Error al crear múltiples reservaciones:', err);
+    res.status(500).json({ success: false, message: 'Error al crear las reservaciones' });
+  }
+};
+
+module.exports = { crearReservacion, 
+  obtenerReservaciones, 
+  obtenerReservacionPorButaca, 
+  actualizarReservacion, 
+  eliminarReservacion, 
+  obtenerTodasReservas, 
+  obtenerReservacionPorId, 
+  crearMultiplesReservaciones
+};

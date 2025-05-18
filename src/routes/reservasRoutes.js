@@ -1,6 +1,7 @@
 const express = require('express');
 const {
   crearReservacion,
+  crearMultiplesReservaciones, // ✅ Importamos el nuevo controlador
   obtenerReservaciones,
   obtenerReservacionPorButaca,
   eliminarReservacion,
@@ -53,6 +54,48 @@ router.post('/', verificarToken, crearReservacion);
 
 /**
  * @swagger
+ * /reservas/multiples:
+ *   post:
+ *     summary: Crear múltiples reservaciones en una sola solicitud
+ *     tags: [Reservaciones]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - funcion_id
+ *               - butacas
+ *             properties:
+ *               funcion_id:
+ *                 type: integer
+ *               butacas:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   required:
+ *                     - fila
+ *                     - columna
+ *                   properties:
+ *                     fila:
+ *                       type: integer
+ *                     columna:
+ *                       type: integer
+ *     responses:
+ *       201:
+ *         description: Reservaciones creadas exitosamente
+ *       400:
+ *         description: Datos incompletos o inválidos
+ *       409:
+ *         description: Una o más butacas ya están reservadas
+ */
+router.post('/multiples', verificarToken, crearMultiplesReservaciones);
+
+/**
+ * @swagger
  * /reservas:
  *   get:
  *     summary: Obtener todas las reservaciones del usuario autenticado
@@ -79,7 +122,7 @@ router.get('/', verificarToken, obtenerReservaciones);
  *       403:
  *         description: Acceso denegado
  */
-router.get('/todas', verificarToken, esAdmin, obtenerTodasReservas);
+router.get('/todas', verificarToken, obtenerTodasReservas);
 
 /**
  * @swagger
