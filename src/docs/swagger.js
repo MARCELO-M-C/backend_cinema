@@ -9,7 +9,7 @@ const swaggerDefinition = {
   },
   servers: [
     {
-      url: 'http://localhost:3000/api', 
+      url: 'https://backendcinema-production.up.railway.app/api', 
     },
   ],
   components: {
