@@ -150,27 +150,30 @@ const crearMultiplesReservaciones = async (req, res) => {
 };
 
 const generarReporteActividad = async (req, res) => {
+  const { funcion_id } = req.params;
+  const precio = 480;
+
   try {
-    const funciones = await obtenerDatosReporte();
-    const precio = 480;
+    const data = await obtenerReportePorFuncion(funcion_id);
+    if (!data) {
+      return res.status(404).json({ mensaje: "Función no encontrada" });
+    }
 
-    const reporte = funciones.map(funcion => {
-      const vacias = funcion.capacidad - funcion.butacasReservadas;
-      return {
-        funcion_id: funcion.funcion_id,
-        sala: funcion.sala,
-        fecha: funcion.fecha,
-        butacasReservadas: funcion.butacasReservadas,
-        capacidad: funcion.capacidad,
-        ingresosTotales: funcion.butacasReservadas * precio,
-        ingresosPerdidos: vacias * precio
-      };
-    });
+    const vacias = data.capacidad - data.butacasReservadas;
+    const resultado = {
+      funcion_id: data.funcion_id,
+      sala: data.sala,
+      fecha: data.fecha,
+      butacasReservadas: data.butacasReservadas,
+      capacidad: data.capacidad,
+      ingresosTotales: data.butacasReservadas * precio,
+      ingresosPerdidos: vacias * precio
+    };
 
-    res.json(reporte);
+    res.json(resultado);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ mensaje: "Error al generar el reporte detallado" });
+    res.status(500).json({ mensaje: "Error al generar el reporte por función" });
   }
 };
 

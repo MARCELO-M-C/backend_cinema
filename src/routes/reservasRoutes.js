@@ -242,40 +242,24 @@ router.delete('/:id', verificarToken, esAdmin, eliminarReservacion);
 
 /**
  * @swagger
- * /reservas/reporte:
+ * /reservas/reporte/{funcion_id}:
  *   get:
- *     summary: Obtener un reporte detallado por función (solo admin)
+ *     summary: Obtener reporte de una función específica (solo admin)
  *     tags: [Reservaciones]
  *     security:
  *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: funcion_id
+ *         required: true
+ *         schema:
+ *           type: integer
  *     responses:
  *       200:
- *         description: Lista detallada por función con capacidad, ocupación e ingresos
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 type: object
- *                 properties:
- *                   funcion_id:
- *                     type: integer
- *                   sala:
- *                     type: string
- *                   fecha:
- *                     type: string
- *                     format: date
- *                   butacasReservadas:
- *                     type: integer
- *                   capacidad:
- *                     type: integer
- *                   ingresosTotales:
- *                     type: number
- *                   ingresosPerdidos:
- *                     type: number
- *       401:
- *         description: Token inválido o no autorizado
+ *         description: Reporte detallado de la función
+ *       404:
+ *         description: Función no encontrada
  */
-router.get('/reporte', verificarToken, esAdmin, generarReporteActividad);
+router.get('/reporte/:funcion_id', verificarToken, esAdmin, generarReporteActividad);
 
 module.exports = router;
