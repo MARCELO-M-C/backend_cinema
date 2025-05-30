@@ -244,26 +244,35 @@ router.delete('/:id', verificarToken, esAdmin, eliminarReservacion);
  * @swagger
  * /reservas/reporte:
  *   get:
- *     summary: Obtener un reporte de actividad para los próximos 8 días (solo admin)
+ *     summary: Obtener un reporte detallado por función (solo admin)
  *     tags: [Reservaciones]
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: Datos del reporte (butacas reservadas, ingresos, pérdidas)
+ *         description: Lista detallada por función con capacidad, ocupación e ingresos
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 butacasReservadas:
- *                   type: integer
- *                 ingresosTotales:
- *                   type: number
- *                   format: float
- *                 ingresosPerdidos:
- *                   type: number
- *                   format: float
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   funcion_id:
+ *                     type: integer
+ *                   sala:
+ *                     type: string
+ *                   fecha:
+ *                     type: string
+ *                     format: date
+ *                   butacasReservadas:
+ *                     type: integer
+ *                   capacidad:
+ *                     type: integer
+ *                   ingresosTotales:
+ *                     type: number
+ *                   ingresosPerdidos:
+ *                     type: number
  *       401:
  *         description: Token inválido o no autorizado
  */

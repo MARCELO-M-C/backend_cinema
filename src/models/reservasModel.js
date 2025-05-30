@@ -78,13 +78,16 @@ const obtenerDatosReporte = async () => {
   const [filas] = await db.execute(`
     SELECT
       f.id AS funcion_id,
-      COUNT(r.id) AS butacasReservadas,
-      s.filas * s.columnas AS capacidad
+      f.fecha,
+      s.nombre AS sala,
+      s.filas * s.columnas AS capacidad,
+      COUNT(r.id) AS butacasReservadas
     FROM funciones f
     JOIN salas s ON f.sala_id = s.id
     LEFT JOIN reservaciones r ON f.id = r.funcion_id
     WHERE f.fecha BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 8 DAY)
     GROUP BY f.id
+    ORDER BY f.fecha ASC
   `);
   return filas;
 };
