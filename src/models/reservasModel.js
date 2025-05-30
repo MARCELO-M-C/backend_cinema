@@ -74,6 +74,21 @@ const crearMultiplesReservaciones = async ({ funcion_id, usuario_id, butacas }) 
   return insertIds; 
 };
 
+const obtenerDatosReporte = async () => {
+  const [filas] = await db.execute(`
+    SELECT
+      f.id AS funcion_id,
+      COUNT(r.id) AS butacasReservadas,
+      s.filas * s.columnas AS capacidad
+    FROM funciones f
+    JOIN salas s ON f.sala_id = s.id
+    LEFT JOIN reservaciones r ON f.id = r.funcion_id
+    WHERE f.fecha BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 8 DAY)
+    GROUP BY f.id
+  `);
+  return filas;
+};
+
 module.exports = { crearReservacion, 
   obtenerReservacionesPorUsuario, 
   obtenerReservacionPorFuncionYButaca, 
@@ -81,5 +96,6 @@ module.exports = { crearReservacion,
   actualizarReservacion, 
   eliminarReservacion, 
   obtenerTodasReservas, 
-  crearMultiplesReservaciones
+  crearMultiplesReservaciones, 
+  obtenerDatosReporte
  };

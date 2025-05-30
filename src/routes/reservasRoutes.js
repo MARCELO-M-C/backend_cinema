@@ -7,7 +7,8 @@ const {
   eliminarReservacion,
   obtenerTodasReservas,
   obtenerReservacionPorId,
-  actualizarReservacion
+  actualizarReservacion,
+  generarReporteActividad,
 } = require('../controllers/reservasController');
 const { verificarToken, esAdmin } = require('../middlewares/authMiddleware');
 const router = express.Router();
@@ -238,5 +239,34 @@ router.put('/editar/:id', verificarToken, esAdmin, actualizarReservacion);
  *         description: Reservación no encontrada
  */
 router.delete('/:id', verificarToken, esAdmin, eliminarReservacion);
+
+/**
+ * @swagger
+ * /reservas/reporte:
+ *   get:
+ *     summary: Obtener un reporte de actividad para los próximos 8 días (solo admin)
+ *     tags: [Reservaciones]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Datos del reporte (butacas reservadas, ingresos, pérdidas)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 butacasReservadas:
+ *                   type: integer
+ *                 ingresosTotales:
+ *                   type: number
+ *                   format: float
+ *                 ingresosPerdidos:
+ *                   type: number
+ *                   format: float
+ *       401:
+ *         description: Token inválido o no autorizado
+ */
+router.get('/reporte', verificarToken, esAdmin, generarReporteActividad);
 
 module.exports = router;

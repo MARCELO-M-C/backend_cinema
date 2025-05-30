@@ -1,5 +1,6 @@
 const Reservacion = require('../models/reservasModel');
 const Funcion = require('../models/funcionModel');
+const { obtenerDatosReporte } = require('../models/reservasModel');
 
 // Crear nueva reservación
 const crearReservacion = async (req, res) => {
@@ -145,6 +146,34 @@ const crearMultiplesReservaciones = async (req, res) => {
     console.error('Error al crear múltiples reservaciones:', err);
     res.status(500).json({ success: false, message: 'Error al crear las reservaciones' });
   }
+  
+};
+
+const generarReporteActividad = async (req, res) => {
+  try {
+    const filas = await obtenerDatosReporte();
+    const precio = 480; // precio fijo por butaca
+
+    let totalReservadas = 0;
+    let totalIngresos = 0;
+    let totalPerdidos = 0;
+
+    for (const fila of filas) {
+      totalReservadas += fila.butacasReservadas;
+      totalIngresos += fila.butacasReservadas * precio;
+      const vacias = fila.capacidad - fila.butacasReservadas;
+      totalPerdidos += vacias * precio;
+    }
+
+    res.json({
+      butacasReservadas: totalReservadas,
+      ingresosTotales: totalIngresos,
+      ingresosPerdidos: totalPerdidos
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ mensaje: "Error al generar el reporte" });
+  }
 };
 
 module.exports = { crearReservacion, 
@@ -154,5 +183,6 @@ module.exports = { crearReservacion,
   eliminarReservacion, 
   obtenerTodasReservas, 
   obtenerReservacionPorId, 
-  crearMultiplesReservaciones
+  crearMultiplesReservaciones,
+  generarReporteActividad
 };
