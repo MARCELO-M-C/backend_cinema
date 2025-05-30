@@ -154,7 +154,7 @@ const generarReporteActividad = async (req, res) => {
   const precio = 480;
 
   try {
-    const data = await obtenerReportePorFuncion(funcion_id);
+    const data = await obtenerDatosReporte(funcion_id);
     if (!data) {
       return res.status(404).json({ mensaje: "Función no encontrada" });
     }
